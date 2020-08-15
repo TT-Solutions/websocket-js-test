@@ -42,18 +42,21 @@ window.onload = function() {
     const action = isWrite ? 'write' : 'read';
     const dataToSend = isWrite ? writeData : readData;
     return async function() {
-      console.time(action);
-      for (let i=0; i<5; ++i) {
-        console.time('while');
-        console.time('send');
+      const start = window.performance.now();
+      let totalBytes = 0;
+
+      const NUM_ITER = 5;
+      log(`Running ${NUM_ITER} ${action} tests:`);
+
+      for (let i=0; i<NUM_ITER; ++i) {
+        log(`  ${i+1}`);
         const receivedData = await send(dataToSend);
-        console.timeEnd('send');
-        const message = `Finished (send ${dataToSend.length} bytes, receive ${receivedData.length} bytes)`;
-        log(message);
-        console.log(message);
-        console.timeEnd('while');
+        // only one of those is non-zero
+        totalBytes += dataToSend.length + receivedData.length;
       }
-      console.timeEnd(action);
+
+      const time = window.performance.now() - start;
+      log(`Done in ${time}ms, speed: ${(totalBytes / time / 1000.0).toFixed(2)}MBps`);
     }
   }
 

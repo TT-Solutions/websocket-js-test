@@ -6,8 +6,9 @@ const writeData = new Uint8Array(16*1024*1024);
 
 function log(text) {
   let logWindow = document.getElementById("logWindow");
-  logWindow.appendChild(document.createTextNode(text));
+  const child = logWindow.appendChild(document.createTextNode(text));
   logWindow.appendChild(document.createElement("br"));
+  return child;
 }
 
 function defaultOnMessage(e) {
@@ -46,17 +47,21 @@ window.onload = function() {
       let totalBytes = 0;
 
       const NUM_ITER = 5;
-      log(`Running ${NUM_ITER} ${action} tests:`);
+      const progress = log(`Running ${NUM_ITER} ${action} tests: `);
 
       for (let i=0; i<NUM_ITER; ++i) {
-        log(`  ${i+1}`);
+        progress.nodeValue += '.';
+
         const receivedData = await send(dataToSend);
         // only one of those is non-zero
         totalBytes += dataToSend.length + receivedData.length;
       }
 
       const time = window.performance.now() - start;
-      log(`Done in ${time}ms, speed: ${(totalBytes / time / 1000.0).toFixed(2)}MBps`);
+
+      progress.nodeValue += ' done';
+
+      log(`Elapsed: ${time}ms, average speed: ${(totalBytes / time / 1000.0).toFixed(2)}MBps`);
     }
   }
 

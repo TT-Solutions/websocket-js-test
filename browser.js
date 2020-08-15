@@ -43,11 +43,12 @@ window.onload = function() {
     const action = isWrite ? 'write' : 'read';
     const dataToSend = isWrite ? writeData : readData;
     return async function() {
+      const NUM_ITER = 5;
+      const progress = log(`Running ${NUM_ITER} ${action} tests: `);
+
       const start = window.performance.now();
       let totalBytes = 0;
 
-      const NUM_ITER = 5;
-      const progress = log(`Running ${NUM_ITER} ${action} tests: `);
 
       for (let i=0; i<NUM_ITER; ++i) {
         progress.nodeValue += '.';
